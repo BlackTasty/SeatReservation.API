@@ -16,16 +16,19 @@ namespace SeatReservation.Api.Util
         private readonly IMovieRepository movieRepository;
         private readonly ISeatTypeRepository seatTypeRepository;
         private readonly IReservationRepository reservationRepository;
+        private readonly ILocationRepository locationRepository;
         private readonly IMapper mapper;
 
         public Parser(IScheduleRepository scheduleRepository, IRoomRepository roomRepository, IMovieRepository movieRepository,
-            ISeatTypeRepository seatTypeRepository, IReservationRepository reservationRepository, IMapper mapper)
+            ISeatTypeRepository seatTypeRepository, IReservationRepository reservationRepository, ILocationRepository locationRepository, 
+            IMapper mapper)
         {
             this.scheduleRepository = scheduleRepository;
             this.roomRepository = roomRepository;
             this.movieRepository = movieRepository;
             this.seatTypeRepository = seatTypeRepository;
             this.reservationRepository = reservationRepository;
+            this.locationRepository = locationRepository;
             this.mapper = mapper;
 
         }
@@ -158,6 +161,62 @@ namespace SeatReservation.Api.Util
                 IsArchived = movieDto.IsArchived,
                 Genres = GenresListToString(movieDto.Genres),
                 IsFeatured = movieDto.IsFeatured
+            };
+        }
+
+        public LocationDto ToLocationDto(Location location)
+        {
+            List<RoomDto> assignedRooms = GetAssignedRoomsForLocation(location.Id);
+
+            return new LocationDto()
+            {
+                Id = location.Id,
+                Name = location.Name,
+                Address = location.Address,
+                ZipCode = location.ZipCode,
+                Country = location.Country,
+                State = location.State,
+                Logo = location.Logo,
+                IsShutdown = location.IsShutdown,
+                Rooms = assignedRooms
+            };
+        }
+
+        public List<RoomDto> GetAssignedRoomsForLocation(int locationId)
+        {
+            List<RoomDto> assignedRooms = new List<RoomDto>();
+            RoomAssignment roomAssignment = locationRepository.GetRoomAssignmentForLocation(locationId);
+            if (roomAssignment != null)
+            {
+                string[] roomIdsRaw = roomAssignment.RoomIds.Split(';');
+                foreach (string roomIdRaw in roomIdsRaw)
+                {
+                    if (int.TryParse(roomIdRaw, out int roomId))
+                    {
+                        RoomDto room = ToRoomDto(roomRepository.GetRoomById(roomId));
+                        if (room != null)
+                        {
+                            assignedRooms.Add(room);
+                        }
+                    }
+                }
+            }
+
+            return assignedRooms.OrderBy(x => x.Name).ToList();
+        }
+
+        public Location ToLocation(LocationDto locationDto)
+        {
+            return new Location()
+            {
+                Id = locationDto.Id,
+                Name = locationDto.Name,
+                Address = locationDto.Address,
+                ZipCode = locationDto.ZipCode,
+                Country = locationDto.Country,
+                State = locationDto.State,
+                Logo = locationDto.Logo,
+                IsShutdown = locationDto.IsShutdown
             };
         }
 

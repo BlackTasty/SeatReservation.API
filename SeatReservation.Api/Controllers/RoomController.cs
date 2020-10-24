@@ -46,6 +46,14 @@ namespace SeatReservation.Api.Controllers
             return Ok(roomService.GetRoomByName(name));
         }
 
+        [AllowAnonymous]
+        [HttpGet("getroombyid")]
+        [ProducesResponseType(200)]
+        public IActionResult GetRoomById(int id)
+        {
+            return Ok(roomService.GetRoomById(id));
+        }
+
         [HttpPost("addroom")]
         [ProducesResponseType(200)]
         [ProducesResponseType(409)]
@@ -55,7 +63,7 @@ namespace SeatReservation.Api.Controllers
             Result result = roomService.AddRoom(room);
             if (result.Success)
             {
-                return Ok(result.Success);
+                return Ok(result.Id);
             }
             else
             {

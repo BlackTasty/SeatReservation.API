@@ -75,7 +75,7 @@ namespace SeatReservation.Api.Repositories.Implementation
 
                 databaseContext.Rooms.Add(room);
                 databaseContext.SaveChanges();
-                return new Result();
+                return new Result(room.Id);
             }
             catch (Exception ex)
             {
@@ -114,7 +114,7 @@ namespace SeatReservation.Api.Repositories.Implementation
 
         public ICollection<Room> GetRooms()
         {
-            return databaseContext.Rooms.ToList();
+            return databaseContext.Rooms.OrderBy(x => x.Name).ToList();
         }
 
         public Schedule GetSchedule(int roomId)

@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SeatReservation.Api.Database;
 
 namespace SeatReservation.Api.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20201023012018_Locations")]
+    partial class Locations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -155,21 +157,6 @@ namespace SeatReservation.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("rooms");
-                });
-
-            modelBuilder.Entity("SeatReservation.Api.Models.RoomAssignment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("LocationId");
-
-                    b.Property<string>("RoomIds")
-                        .IsRequired();
-
-                    b.HasKey("Id");
-
-                    b.ToTable("room_assignments");
                 });
 
             modelBuilder.Entity("SeatReservation.Api.Models.RoomPlan", b =>

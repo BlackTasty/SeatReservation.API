@@ -47,6 +47,7 @@ namespace SeatReservation.Api
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ISeatTypeRepository, SeatTypeRepository>();
             services.AddScoped<IReservationRepository, ReservationRepository>();
+            services.AddScoped<ILocationRepository, LocationRepository>();
             #endregion
             #region Services
             services.AddScoped<IMovieService, MovieService>();
@@ -55,6 +56,7 @@ namespace SeatReservation.Api
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ISeatTypeService, SeatTypeService>();
             services.AddScoped<IReservationService, ReservationService>();
+            services.AddScoped<ILocationService, LocationService>();
             #endregion
             #region Parser
             services.AddScoped<IParser, Parser>();
@@ -144,6 +146,8 @@ namespace SeatReservation.Api
             var scheduleSlotConfiguration = Configuration.GetSection("ScheduleSlot").Get<ScheduleSlotConfiguration>();
             var seatTypeConfiguration = Configuration.GetSection("SeatType").Get<SeatTypeConfiguration>();
             var seatPositionConfiguration = Configuration.GetSection("SeatPosition").Get<SeatPositionConfiguration>();
+            var locationConfiguration = Configuration.GetSection("Location").Get<LocationConfiguration>();
+            var roomAssignmentConfiguration = Configuration.GetSection("RoomAssignment").Get<RoomAssignmentConfiguration>();
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetRequiredService<DatabaseContext>();
@@ -153,6 +157,7 @@ namespace SeatReservation.Api
                 UserSeed.Seed(context, userConfiguration.Users);
                 PermissionSeed.Seed(context, permissionConfiguration.Permissions);
                 SeatTypeSeed.Seed(context, seatTypeConfiguration.SeatTypes);
+                LocationSeed.Seed(context, locationConfiguration.Locations);
             }
         }
     }

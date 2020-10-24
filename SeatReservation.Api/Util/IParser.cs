@@ -26,7 +26,13 @@ namespace SeatReservation.Api.Util
         RoomPlanDto ToRoomPlanDto(RoomPlan roomPlan);
 
         MovieDto ToMovieDto(Movie movie);
-        
+
         Movie ToMovie(MovieDto movieDto);
+
+        LocationDto ToLocationDto(Location location);
+
+        Location ToLocation(LocationDto locationDto);
+
+        List<RoomDto> GetAssignedRoomsForLocation(int locationId);
     }
 }

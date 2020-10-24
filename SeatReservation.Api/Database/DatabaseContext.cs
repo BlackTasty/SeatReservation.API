@@ -34,6 +34,10 @@ namespace SeatReservation.Api.Database
 
         public DbSet<User> Users { get; set; }
 
+        public DbSet<Location> Locations{ get; set; }
+
+        public DbSet<RoomAssignment> RoomAssignments { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseMySql("Server=localhost;Database=seat_reservation;User=root;Password=root;");
@@ -53,6 +57,8 @@ namespace SeatReservation.Api.Database
             modelBuilder.ApplyConfiguration(new SeatTypeConfiguration());
             modelBuilder.ApplyConfiguration(new SeatPositionConfiguration());
             modelBuilder.ApplyConfiguration(new UserConfiguration());
+            modelBuilder.ApplyConfiguration(new LocationConfiguration());
+            modelBuilder.ApplyConfiguration(new RoomAssignmentConfiguration());
             base.OnModelCreating(modelBuilder);
         }
     }
