@@ -148,6 +148,7 @@ namespace SeatReservation.Api
             var seatPositionConfiguration = Configuration.GetSection("SeatPosition").Get<SeatPositionConfiguration>();
             var locationConfiguration = Configuration.GetSection("Location").Get<LocationConfiguration>();
             var roomAssignmentConfiguration = Configuration.GetSection("RoomAssignment").Get<RoomAssignmentConfiguration>();
+            var roomTechnologyConfiguration = Configuration.GetSection("RoomTechnology").Get<RoomTechnologyConfiguration>();
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetRequiredService<DatabaseContext>();
@@ -158,6 +159,7 @@ namespace SeatReservation.Api
                 PermissionSeed.Seed(context, permissionConfiguration.Permissions);
                 SeatTypeSeed.Seed(context, seatTypeConfiguration.SeatTypes);
                 LocationSeed.Seed(context, locationConfiguration.Locations);
+                RoomTechnologySeed.Seed(context, roomTechnologyConfiguration.RoomTechnologies);
             }
         }
     }

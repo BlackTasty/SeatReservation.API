@@ -31,6 +31,9 @@ namespace SeatReservation.Api.Mapping
 
             CreateMap<SeatPosition, SeatPositionDto>()
                 .ReverseMap();
+
+            CreateMap<RoomTechnology, RoomTechnologyDto>()
+                .ReverseMap();
         }
     }
 }

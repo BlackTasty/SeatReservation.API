@@ -6,19 +6,16 @@ using System.Threading.Tasks;
 
 namespace SeatReservation.Api.Models
 {
-    public class SeatType
+    public class RoomTechnology
     {
         public int Id { get; set; }
 
         [Required]
         public string Name { get; set; }
 
-        public string SeatImage { get; set; }
-
         [Required]
-        public int SeatCount { get; set; } = 1;
+        public double ExtraCharge { get; set; } = 0;
 
-        [Required]
-        public double BasePrice { get; set; } = 4.99;
+        public string Description { get; set; }
     }
 }

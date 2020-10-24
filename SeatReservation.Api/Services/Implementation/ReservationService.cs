@@ -15,21 +15,45 @@ namespace SeatReservation.Api.Services.Implementation
     {
         private readonly IReservationRepository reservationRepository;
         private readonly IMapper mapper;
+        private readonly IParser parser;
 
-        public ReservationService(IReservationRepository reservationRepository, IMapper mapper)
+        public ReservationService(IReservationRepository reservationRepository, IMapper mapper, IParser parser)
         {
             this.reservationRepository = reservationRepository;
             this.mapper = mapper;
+            this.parser = parser;
         }
 
-        public Result AddReservation(ReservationDto reservation)
+        public Result AddReservation(ICollection<ReservationDto> reservations)
         {
-            return reservationRepository.AddReservation(mapper.Map<Reservation>(reservation));
+            List<Reservation> reservationsDb = new List<Reservation>();
+
+            foreach (ReservationDto reservation in reservations)
+            {
+                reservationsDb.Add(parser.ToReservation(reservation));
+            }
+
+            return reservationRepository.AddReservation(reservationsDb);
         }
 
-        public Result CancelReservation(int reservationId)
+        public Result CancelReservation(int reservationId, int userId)
         {
-            return reservationRepository.CancelReservation(reservationId);
+            Reservation reservation = reservationRepository.GetById(reservationId);
+
+            if (reservation == null)
+            {
+                return new Result(false);
+            }
+
+            ReservationDto reservationDto = parser.ToReservationDto(reservation);
+
+            //Check if reservation is older than 30 minutes or if movie start is less than 15 minutes away. If so deny the cancellation
+            if (DateTime.Now.Subtract(reservation.BookingDate).TotalMinutes <= 30 || reservationDto.ScheduleSlot.Start.Subtract(DateTime.Now).TotalMinutes <= 15)
+            {
+                return new Result(false);
+            }
+
+            return reservationRepository.CancelReservation(reservation, userId);
         }
 
         public ReservationDto GetById(int id)
@@ -40,6 +64,17 @@ namespace SeatReservation.Api.Services.Implementation
         public ICollection<ReservationDto> GetReservations()
         {
             return mapper.Map<ICollection<ReservationDto>>(reservationRepository.GetReservations());
+        }
+
+        public ICollection<ReservationDto> GetReservationsForSchedule(int scheduleId)
+        {
+            List<ReservationDto> reservations = new List<ReservationDto>();
+            foreach (Reservation reservation in  reservationRepository.GetReservationsForSchedule(scheduleId))
+            {
+                reservations.Add(parser.ToReservationDto(reservation));
+            }
+
+            return reservations;
         }
     }
 }

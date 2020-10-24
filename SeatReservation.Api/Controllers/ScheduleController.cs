@@ -22,11 +22,20 @@ namespace SeatReservation.Api.Controllers
             this.scheduleService = scheduleService;
         }
 
+        [AllowAnonymous]
         [HttpGet("getschedules")]
         [ProducesResponseType(200)]
         public IActionResult GetSchedules()
         {
             return Ok(scheduleService.GetSchedules());
+        }
+
+        [AllowAnonymous]
+        [HttpGet("getscheduleslotbyid")]
+        [ProducesResponseType(200)]
+        public IActionResult GetScheduleSlotById(int id)
+        {
+            return Ok(scheduleService.GetScheduleSlotById(id));
         }
 
         [HttpPost("schedulemovie")]

@@ -12,20 +12,17 @@ namespace SeatReservation.Api.Models
 
         public int SeatId { get; set; }
 
-        public SeatType Seat { get; set; }
-
         public int ScheduleSlotId { get; set; }
 
-        public ScheduleSlot ScheduleSlot { get; set; }
-
         public int RoomId { get; set; }
-
-        public Room Room { get; set; }
 
         [Required]
         public ReservationStatus ReservationStatus { get; set; }
 
         [Required]
         public DateTime BookingDate { get; set; }
+
+        [Required]
+        public int UserId { get; set; }
     }
 }

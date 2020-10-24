@@ -15,6 +15,8 @@ namespace SeatReservation.Api.DTO
 
         public int SeatCount { get; set; }
 
+        public double BasePrice { get; set; }
+
         public ICollection<SeatPositionDto> SeatPosition { get; set; }
     }
 }

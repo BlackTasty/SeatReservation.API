@@ -39,6 +39,14 @@ namespace SeatReservation.Api.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet("getroombyscheduleid")]
+        [ProducesResponseType(200)]
+        public IActionResult GetToomByScheduleId(int id)
+        {
+            return Ok(roomService.GetRoomByScheduleId(id));
+        }
+
+        [AllowAnonymous]
         [HttpGet("getroombyname")]
         [ProducesResponseType(200)]
         public IActionResult GetRoomByName(string name)
@@ -132,6 +140,7 @@ namespace SeatReservation.Api.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("getrooms")]
         [ProducesResponseType(200)]
         [ProducesResponseType(409)]
@@ -165,6 +174,26 @@ namespace SeatReservation.Api.Controllers
                     return Conflict();
                 }
             }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("gettechnologies")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(409)]
+        [ProducesResponseType(500)]
+        public IActionResult GetTechnologies()
+        {
+            return Ok(roomService.GetTechnologies());
+        }
+
+        [AllowAnonymous]
+        [HttpGet("gettechnologybyid")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(409)]
+        [ProducesResponseType(500)]
+        public IActionResult GetTechnologyById(int id)
+        {
+            return Ok(roomService.GetTechnologyById(id));
         }
     }
 }

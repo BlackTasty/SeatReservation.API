@@ -98,5 +98,18 @@ namespace SeatReservation.Api.Services.Implementation
         {
             return parser.GetAssignedRoomsForLocation(locationId);
         }
+
+        public LocationDto GetLocationByRoomId(int id)
+        {
+            foreach (LocationDto location in GetLocations(false))
+            {
+                if (location.Rooms.FirstOrDefault(x => x.Id == id) != null)
+                {
+                    return location;
+                }
+            }
+
+            return null;
+        }
     }
 }

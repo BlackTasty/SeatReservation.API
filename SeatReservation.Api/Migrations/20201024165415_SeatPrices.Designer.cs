@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SeatReservation.Api.Database;
 
 namespace SeatReservation.Api.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20201024165415_SeatPrices")]
+    partial class SeatPrices
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -127,9 +129,13 @@ namespace SeatReservation.Api.Migrations
 
                     b.Property<int>("SeatId");
 
-                    b.Property<int>("UserId");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("RoomId");
+
+                    b.HasIndex("ScheduleSlotId");
+
+                    b.HasIndex("SeatId");
 
                     b.ToTable("Reservations");
                 });
@@ -297,6 +303,24 @@ namespace SeatReservation.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("users");
+                });
+
+            modelBuilder.Entity("SeatReservation.Api.Models.Reservation", b =>
+                {
+                    b.HasOne("SeatReservation.Api.Models.Room", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("SeatReservation.Api.Models.ScheduleSlot", "ScheduleSlot")
+                        .WithMany()
+                        .HasForeignKey("ScheduleSlotId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("SeatReservation.Api.Models.SeatType", "Seat")
+                        .WithMany()
+                        .HasForeignKey("SeatId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

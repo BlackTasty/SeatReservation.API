@@ -251,5 +251,20 @@ namespace SeatReservation.Api.Repositories.Implementation
         {
             return databaseContext.Rooms.FirstOrDefault(x => x.Id == id);
         }
+
+        public ICollection<RoomTechnology> GetTechnologies()
+        {
+            return databaseContext.RoomTechnologies.ToList();
+        }
+
+        public RoomTechnology GetTechnologyById(int technologyId)
+        {
+            return databaseContext.RoomTechnologies.FirstOrDefault(x => x.Id == technologyId);
+        }
+
+        public Room GetRoomByScheduleId(int scheduleId)
+        {
+            return databaseContext.Rooms.FirstOrDefault(x => x.ScheduleId == scheduleId);
+        }
     }
 }

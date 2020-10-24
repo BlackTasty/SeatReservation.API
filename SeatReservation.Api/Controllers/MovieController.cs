@@ -99,17 +99,17 @@ namespace SeatReservation.Api.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("getgenres")]
         [ProducesResponseType(200)]
-        [AllowAnonymous]
         public IActionResult GetGenres()
         {
             return Ok(movieService.GetGenres());
         }
 
+        [AllowAnonymous]
         [HttpGet("getgenrebyid")]
         [ProducesResponseType(200)]
-        [AllowAnonymous]
         public IActionResult GetGenreById(int genreId)
         {
             return Ok(movieService.GetGenreById(genreId));

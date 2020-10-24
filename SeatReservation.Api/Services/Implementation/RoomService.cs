@@ -80,5 +80,20 @@ namespace SeatReservation.Api.Services.Implementation
             ICollection<SeatPosition> seatPositions = mapper.Map<ICollection<SeatPosition>>(room.RoomPlan.Seats);
             return roomRepository.UpdateRoom(parser.ToRoom(room), parser.ToRoomPlan(room.RoomPlan, false), seatPositions.Where(x=> x.Id == 0).ToList(), seatPositions.Where(x => x.Id != 0).ToList());
         }
+
+        public ICollection<RoomTechnologyDto> GetTechnologies()
+        {
+            return mapper.Map<ICollection<RoomTechnologyDto>>(roomRepository.GetTechnologies());
+        }
+
+        public RoomTechnologyDto GetTechnologyById(int technologyId)
+        {
+            return mapper.Map<RoomTechnologyDto>(roomRepository.GetTechnologyById(technologyId));
+        }
+
+        public RoomDto GetRoomByScheduleId(int scheduleId)
+        {
+            return parser.ToRoomDto(roomRepository.GetRoomByScheduleId(scheduleId));
+        }
     }
 }

@@ -38,6 +38,8 @@ namespace SeatReservation.Api.Database
 
         public DbSet<RoomAssignment> RoomAssignments { get; set; }
 
+        public DbSet<RoomTechnology> RoomTechnologies{ get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseMySql("Server=localhost;Database=seat_reservation;User=root;Password=root;");
@@ -59,6 +61,7 @@ namespace SeatReservation.Api.Database
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new LocationConfiguration());
             modelBuilder.ApplyConfiguration(new RoomAssignmentConfiguration());
+            modelBuilder.ApplyConfiguration(new RoomTechnologyConfiguration());
             base.OnModelCreating(modelBuilder);
         }
     }

@@ -61,5 +61,10 @@ namespace SeatReservation.Api.Services.Implementation
         {
             return scheduleRepository.GenerateSchedule(writeToDatabase);
         }
+
+        public ScheduleSlotDto GetScheduleSlotById(int slotId)
+        {
+            return parser.ToScheduleSlotDto(scheduleRepository.GetScheduleSlotById(slotId));
+        }
     }
 }

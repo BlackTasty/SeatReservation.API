@@ -4,6 +4,7 @@ using SeatReservation.Api.Models;
 using SeatReservation.Api.Repositories.Interface;
 using System;
 using System.Collections.Generic;
+using System.IO.Pipelines;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -59,7 +60,8 @@ namespace SeatReservation.Api.Util
                 Start = scheduleSlotDto.Start.AddHours(2),
                 End = scheduleSlotDto.End.AddHours(2),
                 MovieId = scheduleSlotDto.MovieId,
-                Reservations = ReservationsListToString(scheduleSlotDto.Reservations)
+                Reservations = ReservationsListToString(scheduleSlotDto.Reservations),
+                ScheduleId = scheduleSlotDto.ScheduleId
             };
         }
 
@@ -72,7 +74,8 @@ namespace SeatReservation.Api.Util
                 End = scheduleSlot.End,
                 Movie = ToMovieDto(movieRepository.GetById(scheduleSlot.MovieId)),
                 MovieId = scheduleSlot.MovieId,
-                Reservations = ReservationsStringToList(scheduleSlot.Reservations)
+                Reservations = ReservationsStringToList(scheduleSlot.Reservations),
+                ScheduleId = scheduleSlot.ScheduleId
             };
         }
 
@@ -84,7 +87,8 @@ namespace SeatReservation.Api.Util
                 IsOpen = roomDto.IsOpen,
                 Name = roomDto.Name,
                 RoomPlanId = roomDto.RoomPlanId,
-                ScheduleId = roomDto.ScheduleId
+                ScheduleId = roomDto.ScheduleId,
+                TechnologyId = roomDto.Technology.Id
             };
         }
 
@@ -100,7 +104,9 @@ namespace SeatReservation.Api.Util
                 RoomPlan = roomPlan,
                 RoomPlanId = roomPlan?.Id ?? -1,
                 Schedule = schedule,
-                ScheduleId = schedule?.Id ?? -1
+                ScheduleId = schedule?.Id ?? -1,
+                Technology = mapper.Map<RoomTechnologyDto>(roomRepository.GetTechnologyById(room.TechnologyId)),
+                TechnologyId = room.TechnologyId
             };
         }
 
@@ -326,7 +332,7 @@ namespace SeatReservation.Api.Util
 
             foreach (string id in reservationIds)
             {
-                reservations.Add(mapper.Map<ReservationDto>(reservationRepository.GetById(int.Parse(id))));
+                reservations.Add(ToReservationDto(reservationRepository.GetById(int.Parse(id))));
             }
 
             return reservations;
@@ -342,6 +348,41 @@ namespace SeatReservation.Api.Util
             }
 
             return reservationsString;
+        }
+
+        public Reservation ToReservation(ReservationDto reservationDto)
+        {
+            return new Reservation()
+            {
+                 BookingDate = reservationDto.BookingDate,
+                 Id = reservationDto.Id,
+                 ReservationStatus = reservationDto.ReservationStatus,
+                 RoomId = reservationDto.RoomId,
+                 ScheduleSlotId = reservationDto.ScheduleSlotId,
+                 SeatId = reservationDto.SeatId,
+                 UserId = reservationDto.UserId
+            };
+        }
+
+        public ReservationDto ToReservationDto(Reservation reservation)
+        {
+            if (reservation == null)
+            {
+                return null;
+            }
+
+            return new ReservationDto()
+            {
+                BookingDate = reservation.BookingDate,
+                Id = reservation.Id,
+                ReservationStatus = reservation.ReservationStatus,
+                RoomId = reservation.RoomId,
+                Room = ToRoomDto(roomRepository.GetRoomById(reservation.RoomId)),
+                ScheduleSlotId = reservation.ScheduleSlotId,
+                ScheduleSlot = ToScheduleSlotDto(scheduleRepository.GetScheduleSlotById(reservation.ScheduleSlotId)),
+                SeatId = reservation.SeatId,
+                UserId = reservation.UserId
+            };
         }
         #endregion
         #endregion

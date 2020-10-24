@@ -25,5 +25,7 @@ namespace SeatReservation.Api.DTO
         public ReservationStatus ReservationStatus { get; set; }
 
         public DateTime BookingDate { get; set; }
+
+        public int UserId { get; set; }
     }
 }

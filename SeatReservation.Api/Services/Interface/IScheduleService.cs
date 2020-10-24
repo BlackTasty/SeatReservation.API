@@ -11,6 +11,8 @@ namespace SeatReservation.Api.Services.Interface
     {
         ICollection<ScheduleDto> GetSchedules();
 
+        ScheduleSlotDto GetScheduleSlotById(int slotId);
+
         Result AddSchedule(ScheduleDto schedule);
 
         Result RemoveSchedule(int scheduleId);

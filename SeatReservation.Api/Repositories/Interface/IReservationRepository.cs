@@ -13,8 +13,10 @@ namespace SeatReservation.Api.Repositories.Interface
 
         Reservation GetById(int id);
 
-        Result AddReservation(Reservation reservation);
+        Result AddReservation(ICollection<Reservation> reservations);
 
-        Result CancelReservation(int reservationId);
+        Result CancelReservation(Reservation reservation, int userId);
+
+        ICollection<Reservation> GetReservationsForSchedule(int scheduleId);
     }
 }

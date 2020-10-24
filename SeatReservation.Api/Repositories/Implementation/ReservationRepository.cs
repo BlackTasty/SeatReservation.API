@@ -1,4 +1,5 @@
 ﻿using SeatReservation.Api.Database;
+using SeatReservation.Api.DTO;
 using SeatReservation.Api.Models;
 using SeatReservation.Api.Repositories.Interface;
 using SeatReservation.Api.Util;
@@ -18,11 +19,14 @@ namespace SeatReservation.Api.Repositories.Implementation
             this.databaseContext = databaseContext;
         }
 
-        public Result AddReservation(Reservation reservation)
+        public Result AddReservation(ICollection<Reservation> reservations)
         {
             try
             {
-                databaseContext.Reservations.Add(reservation);
+                foreach (Reservation reservation in reservations)
+                {
+                    databaseContext.Reservations.Add(reservation);
+                }
                 databaseContext.SaveChanges();
                 return new Result();
             }
@@ -32,23 +36,10 @@ namespace SeatReservation.Api.Repositories.Implementation
             }
         }
 
-        public Result CancelReservation(int reservationId)
+        public Result CancelReservation(Reservation reservation, int userId)
         {
             try
             {
-                Reservation reservation = databaseContext.Reservations.FirstOrDefault(x => x.Id == reservationId);
-
-                if (reservation == null)
-                {
-                    return new Result(false);
-                }
-
-                //Check if reservation is older than 30 minutes or if movie start is less than 15 minutes away. If so deny the cancellation
-                if (DateTime.Now.Subtract(reservation.BookingDate).TotalMinutes <= 30 || reservation.ScheduleSlot.Start.Subtract(DateTime.Now).TotalMinutes <= 15)
-                {
-                    return new Result(false);
-                }
-
                 databaseContext.Reservations.Remove(reservation);
                 databaseContext.SaveChanges();
                 return new Result();
@@ -67,6 +58,11 @@ namespace SeatReservation.Api.Repositories.Implementation
         public ICollection<Reservation> GetReservations()
         {
             return databaseContext.Reservations.ToList();
+        }
+
+        public ICollection<Reservation> GetReservationsForSchedule(int scheduleId)
+        {
+            return databaseContext.Reservations.Where(x => x.ScheduleSlotId == scheduleId).ToList();
         }
     }
 }

@@ -139,6 +139,14 @@ namespace SeatReservation.Api.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet("getlocationbyroomid")]
+        [ProducesResponseType(200)]
+        public IActionResult GetLocationByRoomId(int id)
+        {
+            return Ok(locationService.GetLocationByRoomId(id));
+        }
+
+        [AllowAnonymous]
         [HttpGet("getunassignedrooms")]
         [ProducesResponseType(200)]
         public IActionResult GetUnassignedRooms()

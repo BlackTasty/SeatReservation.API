@@ -19,5 +19,8 @@ namespace SeatReservation.Api.Models
 
         [Required]
         public bool IsOpen { get; set; } = true;
+
+        [Required]
+        public int TechnologyId { get; set; } = 1;
     }
 }

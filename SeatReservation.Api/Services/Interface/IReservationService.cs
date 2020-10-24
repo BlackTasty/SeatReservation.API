@@ -13,8 +13,10 @@ namespace SeatReservation.Api.Services.Interface
 
         ReservationDto GetById(int id);
 
-        Result AddReservation(ReservationDto reservation);
+        Result AddReservation(ICollection<ReservationDto> reservations);
 
-        Result CancelReservation(int reservationId);
+        Result CancelReservation(int reservationId, int userId);
+
+        ICollection<ReservationDto> GetReservationsForSchedule(int scheduleId);
     }
 }

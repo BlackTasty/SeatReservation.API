@@ -24,5 +24,7 @@ namespace SeatReservation.Api.Services.Interface
         ICollection<RoomDto> GetUnassignedRooms();
 
         ICollection<RoomDto> GetAssignedRoomsForLocation(int locationId);
+
+        LocationDto GetLocationByRoomId(int id);
     }
 }

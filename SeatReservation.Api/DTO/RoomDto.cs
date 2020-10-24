@@ -20,5 +20,9 @@ namespace SeatReservation.Api.DTO
         public RoomPlanDto RoomPlan { get; set; }
 
         public bool IsOpen { get; set; }
+
+        public int TechnologyId { get; set; }
+
+        public RoomTechnologyDto Technology { get; set; }
     }
 }

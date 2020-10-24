@@ -27,6 +27,12 @@ namespace SeatReservation.Api.Repositories.Interface
 
         Schedule GetSchedule(int roomId);
 
+        Room GetRoomByScheduleId(int scheduleId);
+
         SeatPosition GetSeatPositionById(int seatPositionId);
+
+        ICollection<RoomTechnology> GetTechnologies();
+
+        RoomTechnology GetTechnologyById(int technologyId);
     }
 }
