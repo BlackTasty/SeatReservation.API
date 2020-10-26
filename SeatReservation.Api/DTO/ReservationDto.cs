@@ -1,4 +1,5 @@
-﻿using SeatReservation.Api.Models;
+﻿using Newtonsoft.Json;
+using SeatReservation.Api.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,20 +13,18 @@ namespace SeatReservation.Api.DTO
 
         public int SeatId { get; set; }
 
-        public SeatTypeDto Seat { get; set; }
-
         public int ScheduleSlotId { get; set; }
 
-        public ScheduleSlotDto ScheduleSlot { get; set; }
-
         public int RoomId { get; set; }
-
-        public RoomDto Room { get; set; }
 
         public ReservationStatus ReservationStatus { get; set; }
 
         public DateTime BookingDate { get; set; }
 
         public int UserId { get; set; }
+
+        public string Email { get; set; }
+
+        public bool IsConfirmed { get; set; }
     }
 }

@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using SeatReservation.Api.Authentication;
 using SeatReservation.Api.Common;
 using SeatReservation.Api.Configuration;
@@ -82,7 +83,10 @@ namespace SeatReservation.Api
             services.AddAutoMapper();
             // Add if required
             services.AddCors();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            });
 
             #region Authentication
             services.AddAuthentication("BasicAuthentication")

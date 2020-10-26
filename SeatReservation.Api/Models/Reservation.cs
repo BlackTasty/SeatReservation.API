@@ -22,7 +22,13 @@ namespace SeatReservation.Api.Models
         [Required]
         public DateTime BookingDate { get; set; }
 
-        [Required]
         public int UserId { get; set; }
+
+        public string Email { get; set; }
+
+        /// <summary>
+        /// Currently unused
+        /// </summary>
+        public bool IsConfirmed { get; set; }
     }
 }

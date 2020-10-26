@@ -37,7 +37,7 @@ namespace SeatReservation.Api.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("addReservation")]
+        [HttpPost("addreservation")]
         [ProducesResponseType(200)]
         public IActionResult AddReservation([FromBody]ICollection<ReservationDto> reservations)
         {

@@ -14,12 +14,15 @@ namespace SeatReservation.Api.Services.Implementation
     public class ReservationService : IReservationService
     {
         private readonly IReservationRepository reservationRepository;
+        private readonly IScheduleRepository scheduleRepository;
+        private readonly IRoomRepository roomRepository;
         private readonly IMapper mapper;
         private readonly IParser parser;
 
-        public ReservationService(IReservationRepository reservationRepository, IMapper mapper, IParser parser)
+        public ReservationService(IReservationRepository reservationRepository, IScheduleRepository scheduleRepository, IMapper mapper, IParser parser)
         {
             this.reservationRepository = reservationRepository;
+            this.scheduleRepository = scheduleRepository;
             this.mapper = mapper;
             this.parser = parser;
         }
@@ -45,12 +48,21 @@ namespace SeatReservation.Api.Services.Implementation
                 return new Result(false);
             }
 
-            ReservationDto reservationDto = parser.ToReservationDto(reservation);
-
-            //Check if reservation is older than 30 minutes or if movie start is less than 15 minutes away. If so deny the cancellation
-            if (DateTime.Now.Subtract(reservation.BookingDate).TotalMinutes <= 30 || reservationDto.ScheduleSlot.Start.Subtract(DateTime.Now).TotalMinutes <= 15)
+            if (reservation.ReservationStatus == ReservationStatus.Sold) // Check buy date if older than 30 min or the scheduled movie starts in less than 15 minues
             {
-                return new Result(false);
+                ScheduleSlot scheduleSlot = scheduleRepository.GetScheduleSlotById(reservation.ScheduleSlotId);
+                if (scheduleSlot == null)
+                {
+                    return new Result(false);
+                }
+
+                ReservationDto reservationDto = parser.ToReservationDto(reservation);
+
+                //Check if reservation is older than 30 minutes or if movie start is less than 15 minutes away. If so deny the cancellation
+                if (DateTime.Now.Subtract(reservation.BookingDate).TotalMinutes < 30 || scheduleSlot.Start.Subtract(DateTime.Now).TotalMinutes < 15)
+                {
+                    return new Result(false);
+                }
             }
 
             return reservationRepository.CancelReservation(reservation, userId);

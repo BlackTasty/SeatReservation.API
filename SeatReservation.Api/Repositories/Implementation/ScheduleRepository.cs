@@ -20,6 +20,33 @@ namespace SeatReservation.Api.Repositories.Implementation
             this.roomRepository = roomRepository;
         }
 
+        public Result AddReservationsToScheduleSlot(int scheduleSlotId, ICollection<Reservation> reservations)
+        {
+            try
+            {
+                ScheduleSlot scheduleSlot = GetScheduleSlotById(scheduleSlotId);
+
+                if (scheduleSlot == null)
+                {
+                    return new Result(false);
+                }
+
+                string reservationsRaw = scheduleSlot.Reservations != null ? scheduleSlot.Reservations : "";
+                foreach (Reservation reservation in reservations)
+                {
+                    reservationsRaw += reservationsRaw != "" ? string.Format(";{0}", reservation.Id) : reservation.Id.ToString();
+                }
+
+                scheduleSlot.Reservations = reservationsRaw;
+                databaseContext.ScheduleSlots.Update(scheduleSlot);
+                return new Result();
+            }
+            catch (Exception ex)
+            {
+                return new Result(ex);
+            }
+        }
+
         public Result AddSchedule(Schedule schedule)
         {
             try

@@ -24,5 +24,7 @@ namespace SeatReservation.Api.Repositories.Interface
         ScheduleSlot GetScheduleSlotById(int scheduleSlotId);
 
         int GenerateSchedule(bool writeToDatabase);
+
+        Result AddReservationsToScheduleSlot(int scheduleSlotId, ICollection<Reservation> reservations);
     }
 }

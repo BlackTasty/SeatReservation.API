@@ -6,6 +6,7 @@ using SeatReservation.Api.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace SeatReservation.Api.Repositories.Implementation
@@ -13,20 +14,58 @@ namespace SeatReservation.Api.Repositories.Implementation
     public class ReservationRepository : IReservationRepository
     {
         private readonly DatabaseContext databaseContext;
+        private readonly IScheduleRepository scheduleRepository;
 
-        public ReservationRepository(DatabaseContext databaseContext)
+        public ReservationRepository(DatabaseContext databaseContext, IScheduleRepository scheduleRepository)
         {
             this.databaseContext = databaseContext;
+            this.scheduleRepository = scheduleRepository;
         }
 
         public Result AddReservation(ICollection<Reservation> reservations)
         {
             try
             {
+                if (reservations.Count == 0)
+                {
+                    return new Result(false);
+                }
+
+                ICollection<Reservation> dbReservations = GetReservations().ToList();
+                foreach (Reservation reservation in reservations)
+                {
+                    if (dbReservations.Any(x => x.SeatId == reservation.SeatId))
+                    {
+                        return new Result(false);
+                    }
+                }
+
+                int id = dbReservations.Count + 1;
+                bool duplicateId = false;
+                foreach (Reservation reservation in reservations)
+                {
+                    do
+                    {
+                        duplicateId = dbReservations.Any(x => x.Id == id);
+                        if (duplicateId)
+                        {
+                            id++;
+                        }
+                    } while (duplicateId);
+                    reservation.Id = id;
+                    id++;
+                }
+
+                if (!scheduleRepository.AddReservationsToScheduleSlot(reservations.ElementAt(0).ScheduleSlotId, reservations).Success)
+                {
+                    return new Result(false);
+                }
+
                 foreach (Reservation reservation in reservations)
                 {
                     databaseContext.Reservations.Add(reservation);
                 }
+
                 databaseContext.SaveChanges();
                 return new Result();
             }

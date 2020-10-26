@@ -354,13 +354,15 @@ namespace SeatReservation.Api.Util
         {
             return new Reservation()
             {
-                 BookingDate = reservationDto.BookingDate,
-                 Id = reservationDto.Id,
-                 ReservationStatus = reservationDto.ReservationStatus,
-                 RoomId = reservationDto.RoomId,
-                 ScheduleSlotId = reservationDto.ScheduleSlotId,
-                 SeatId = reservationDto.SeatId,
-                 UserId = reservationDto.UserId
+                BookingDate = reservationDto.BookingDate.AddHours(1),
+                Id = reservationDto.Id,
+                ReservationStatus = reservationDto.ReservationStatus,
+                RoomId = reservationDto.RoomId,
+                ScheduleSlotId = reservationDto.ScheduleSlotId,
+                SeatId = reservationDto.SeatId,
+                UserId = reservationDto.UserId,
+                Email = reservationDto.Email,
+                IsConfirmed = reservationDto.IsConfirmed
             };
         }
 
@@ -377,11 +379,13 @@ namespace SeatReservation.Api.Util
                 Id = reservation.Id,
                 ReservationStatus = reservation.ReservationStatus,
                 RoomId = reservation.RoomId,
-                Room = ToRoomDto(roomRepository.GetRoomById(reservation.RoomId)),
+                //Room = ToRoomDto(roomRepository.GetRoomById(reservation.RoomId)),
                 ScheduleSlotId = reservation.ScheduleSlotId,
-                ScheduleSlot = ToScheduleSlotDto(scheduleRepository.GetScheduleSlotById(reservation.ScheduleSlotId)),
+                //ScheduleSlot = ToScheduleSlotDto(scheduleRepository.GetScheduleSlotById(reservation.ScheduleSlotId)),
                 SeatId = reservation.SeatId,
-                UserId = reservation.UserId
+                UserId = reservation.UserId,
+                Email = reservation.Email,
+                IsConfirmed = reservation.IsConfirmed
             };
         }
         #endregion
