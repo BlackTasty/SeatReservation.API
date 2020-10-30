@@ -88,7 +88,7 @@ namespace SeatReservation.Api.Util
                 Name = roomDto.Name,
                 RoomPlanId = roomDto.RoomPlanId,
                 ScheduleId = roomDto.ScheduleId,
-                TechnologyId = roomDto.Technology.Id
+                TechnologyId = roomDto.Technology == null ? 1 : roomDto.Technology.Id
             };
         }
 
