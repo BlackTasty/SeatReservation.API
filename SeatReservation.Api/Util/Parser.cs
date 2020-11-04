@@ -329,10 +329,15 @@ namespace SeatReservation.Api.Util
         {
             List<ReservationDto> reservations = new List<ReservationDto>();
             string[] reservationIds = reservationsString.Split(';', StringSplitOptions.RemoveEmptyEntries);
+            ICollection<Reservation> reservationsDb = reservationRepository.GetReservations();
 
             foreach (string id in reservationIds)
             {
-                reservations.Add(ToReservationDto(reservationRepository.GetById(int.Parse(id))));
+                Reservation target = reservationsDb.FirstOrDefault(x => x.Id == int.Parse(id));
+                if (target != null)
+                {
+                    reservations.Add(ToReservationDto(target));
+                }
             }
 
             return reservations;

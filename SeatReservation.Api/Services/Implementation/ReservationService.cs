@@ -70,12 +70,17 @@ namespace SeatReservation.Api.Services.Implementation
 
         public ReservationDto GetById(int id)
         {
-            return mapper.Map<ReservationDto>(reservationRepository.GetById(id));
+            return parser.ToReservationDto(reservationRepository.GetById(id));
         }
 
         public ICollection<ReservationDto> GetReservations()
         {
-            return mapper.Map<ICollection<ReservationDto>>(reservationRepository.GetReservations());
+            List<ReservationDto> reservations = new List<ReservationDto>();
+            foreach (Reservation reservation in reservationRepository.GetReservations())
+            {
+                reservations.Add(parser.ToReservationDto(reservation));
+            }
+            return reservations;
         }
 
         public ICollection<ReservationDto> GetReservationsForSchedule(int scheduleId)
