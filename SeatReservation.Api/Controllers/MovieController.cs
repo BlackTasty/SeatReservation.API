@@ -32,6 +32,14 @@ namespace SeatReservation.Api.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet("getmoviebyid")]
+        [ProducesResponseType(200)]
+        public IActionResult GetMovieById(int id)
+        {
+            return Ok(movieService.GetMovieById(id));
+        }
+
+        [AllowAnonymous]
         [HttpGet("getfeaturedmovies")]
         [ProducesResponseType(200)]
         public IActionResult GetFeaturedMovies()
@@ -139,6 +147,74 @@ namespace SeatReservation.Api.Controllers
                     return Conflict();
                 }
             }
+        }
+
+        /*[HttpPost("addperson")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(409)]
+        [ProducesResponseType(500)]
+        public IActionResult AddPerson([FromBody]PersonDto person)
+        {
+            Result result = movieService.AddPerson(person);
+            if (result.Success)
+            {
+                return Ok();
+            }
+            else
+            {
+                if (result.Exception != null)
+                {
+                    Log.Error(result.Exception, "Error adding actor/director to database!");
+                    return StatusCode(500);
+                }
+                else
+                {
+                    Log.Warning("Unable to add actor/director to database!");
+                    return Conflict();
+                }
+            }
+        }
+
+        [HttpPost("addstudio")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(409)]
+        [ProducesResponseType(500)]
+        public IActionResult AddStudio([FromBody]StudioDto studio)
+        {
+            Result result = movieService.AddStudio(studio);
+            if (result.Success)
+            {
+                return Ok();
+            }
+            else
+            {
+                if (result.Exception != null)
+                {
+                    Log.Error(result.Exception, "Error adding studio to database!");
+                    return StatusCode(500);
+                }
+                else
+                {
+                    Log.Warning("Unable to add studio to database!");
+                    return Conflict();
+                }
+            }
+        }*/
+
+        [AllowAnonymous]
+        [HttpGet("getpeople")]
+        [ProducesResponseType(200)]
+        public IActionResult GetPeople()
+        {
+            return Ok(movieService.GetPeople());
+        }
+
+        [AllowAnonymous]
+        [HttpGet("getstudios")]
+        [ProducesResponseType(200)]
+        public IActionResult GetStudios()
+        {
+            return Ok(movieService.GetStudios());
         }
     }
 }

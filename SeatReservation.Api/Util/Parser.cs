@@ -57,8 +57,8 @@ namespace SeatReservation.Api.Util
             return new ScheduleSlot()
             {
                 Id = scheduleSlotDto.Id,
-                Start = scheduleSlotDto.Start.AddHours(2),
-                End = scheduleSlotDto.End.AddHours(2),
+                Start = scheduleSlotDto.Start.ToLocalTime(),
+                End = scheduleSlotDto.End.ToLocalTime(),
                 MovieId = scheduleSlotDto.MovieId,
                 Reservations = ReservationsListToString(scheduleSlotDto.Reservations),
                 ScheduleId = scheduleSlotDto.ScheduleId
@@ -147,7 +147,10 @@ namespace SeatReservation.Api.Util
                 ReleaseDate = movie.ReleaseDate,
                 IsArchived = movie.IsArchived,
                 Genres = GenresStringToList(movie.Genres),
-                IsFeatured = movie.IsFeatured
+                IsFeatured = movie.IsFeatured,
+                Actors = PeopleStringToList(movie.Actors),
+                Directors = PeopleStringToList(movie.Directors),
+                Studios = StudiosStringToList(movie.Studios)
             };
         }
 
@@ -163,10 +166,13 @@ namespace SeatReservation.Api.Util
                 Trailer = movieDto.Trailer,
                 Description = movieDto.Description,
                 MovieLength = movieDto.MovieLength,
-                ReleaseDate = movieDto.ReleaseDate,
+                ReleaseDate = movieDto.ReleaseDate.ToLocalTime(),
                 IsArchived = movieDto.IsArchived,
                 Genres = GenresListToString(movieDto.Genres),
-                IsFeatured = movieDto.IsFeatured
+                IsFeatured = movieDto.IsFeatured,
+                Actors = PeopleListToString(movieDto.Actors),
+                Directors = PeopleListToString(movieDto.Directors),
+                Studios = StudiosListToString(movieDto.Studios)
             };
         }
 
@@ -249,6 +255,66 @@ namespace SeatReservation.Api.Util
             }
 
             return genresString;
+        }
+
+        private List<PersonDto> PeopleStringToList(string peopleString)
+        {
+            List<PersonDto> people = new List<PersonDto>();
+            if (peopleString == null)
+            {
+                return people;
+            }
+
+            string[] peopleIds = peopleString.Split(';', StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string id in peopleIds)
+            {
+                people.Add(ToPersonDto(movieRepository.GetPersonById(int.Parse(id))));
+            }
+
+            return people;
+        }
+
+        private string PeopleListToString(ICollection<PersonDto> people)
+        {
+            string peopleString = "";
+
+            foreach (PersonDto person in people)
+            {
+                peopleString += peopleString == "" ? person.Id.ToString() : ";" + person.Id;
+            }
+
+            return peopleString;
+        }
+
+        private List<StudioDto> StudiosStringToList(string studioString)
+        {
+            List<StudioDto> studios = new List<StudioDto>();
+            if (studioString == null)
+            {
+                return studios;
+            }
+
+            string[] peopleIds = studioString.Split(';', StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string id in peopleIds)
+            {
+                studios.Add(ToStudioDto(movieRepository.GetStudioById(int.Parse(id))));
+            }
+
+            return studios;
+        }
+
+        private string StudiosListToString(ICollection<StudioDto> studios)
+        {
+            string studiosString = "";
+
+            foreach (StudioDto person in studios)
+            {
+                studiosString += studiosString == "" ? person.Id.ToString() : ";" + person.Id;
+            }
+
+            return studiosString;
         }
 
         #region List parser
@@ -359,7 +425,7 @@ namespace SeatReservation.Api.Util
         {
             return new Reservation()
             {
-                BookingDate = reservationDto.BookingDate.AddHours(1),
+                BookingDate = reservationDto.BookingDate.ToLocalTime(),
                 Id = reservationDto.Id,
                 ReservationStatus = reservationDto.ReservationStatus,
                 RoomId = reservationDto.RoomId,
@@ -391,6 +457,42 @@ namespace SeatReservation.Api.Util
                 UserId = reservation.UserId,
                 Email = reservation.Email,
                 IsConfirmed = reservation.IsConfirmed
+            };
+        }
+
+        public PersonDto ToPersonDto(Person person)
+        {
+            return new PersonDto()
+            {
+                Id = person.Id,
+                Name = person.Name
+            };
+        }
+
+        public Person ToPerson(PersonDto personDto)
+        {
+            return new Person()
+            {
+                Id = personDto.Id,
+                Name = personDto.Name
+            };
+        }
+
+        public StudioDto ToStudioDto(Studio studio)
+        {
+            return new StudioDto()
+            {
+                Id = studio.Id,
+                Name = studio.Name
+            };
+        }
+
+        public Studio ToStudio(StudioDto studioDto)
+        {
+            return new Studio()
+            {
+                Id = studioDto.Id,
+                Name = studioDto.Name
             };
         }
         #endregion

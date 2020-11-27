@@ -105,5 +105,82 @@ namespace SeatReservation.Api.Repositories.Implementation
         {
             return databaseContext.Movies.Where(x => x.IsFeatured).ToList();
         }
+
+        public Movie GetMovieById(int movieId)
+        {
+            return databaseContext.Movies.FirstOrDefault(x => x.Id == movieId);
+        }
+
+        public int AddPerson(Person person)
+        {
+            try
+            {
+                ICollection<Person> people = GetPeople();
+                int id = people.Count + 1;
+                bool duplicateId = false;
+                do
+                {
+                    duplicateId = people.Any(x => x.Id == id);
+                    if (duplicateId)
+                    {
+                        id++;
+                    }
+                } while (duplicateId);
+                person.Id = id;
+                databaseContext.People.Add(person);
+                databaseContext.SaveChanges();
+                return id;
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
+        }
+
+        public ICollection<Person> GetPeople()
+        {
+            return databaseContext.People.ToList();
+        }
+
+        public int AddStudio(Studio studio)
+        {
+            try
+            {
+                ICollection<Studio> studios = GetStudios();
+                int id = studios.Count + 1;
+                bool duplicateId = false;
+                do
+                {
+                    duplicateId = studios.Any(x => x.Id == id);
+                    if (duplicateId)
+                    {
+                        id++;
+                    }
+                } while (duplicateId);
+                studio.Id = id;
+                databaseContext.Studios.Add(studio);
+                databaseContext.SaveChanges();
+                return id;
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
+        }
+
+        public ICollection<Studio> GetStudios()
+        {
+            return databaseContext.Studios.ToList();
+        }
+
+        public Person GetPersonById(int id)
+        {
+            return databaseContext.People.FirstOrDefault(x => x.Id == id);
+        }
+
+        public Studio GetStudioById(int id)
+        {
+            return databaseContext.Studios.FirstOrDefault(x => x.Id == id);
+        }
     }
 }

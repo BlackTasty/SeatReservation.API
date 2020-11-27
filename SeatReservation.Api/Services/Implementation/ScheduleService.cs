@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace SeatReservation.Api.Services.Implementation
 {
@@ -65,6 +66,50 @@ namespace SeatReservation.Api.Services.Implementation
         public ScheduleSlotDto GetScheduleSlotById(int slotId)
         {
             return parser.ToScheduleSlotDto(scheduleRepository.GetScheduleSlotById(slotId));
+        }
+
+        public ICollection<DateTime> GetDatesWithMovies()
+        {
+            return scheduleRepository.GetDatesWithMovies();
+        }
+
+        public Result CopySchedule(ScheduleCopyTargetDto scheduleCopyTarget)
+        {
+            if (scheduleCopyTarget.ScheduleSlotIds == null)
+            {
+                return new Result();
+            }
+            int lastCopyTargetId = scheduleCopyTarget.ScheduleSlotIds.Last();
+            for (int i = 0; i < scheduleCopyTarget.ScheduleSlotIds.Count; i++)
+            {
+                ScheduleSlotDto original = GetScheduleSlotById(scheduleCopyTarget.ScheduleSlotIds.ElementAt(i));
+                ScheduleSlotDto scheduleSlot = new ScheduleSlotDto()
+                {
+                    MovieId = original.MovieId,
+                    ScheduleId = original.ScheduleId,
+                    Reservations = new List<ReservationDto>()
+                };
+
+                TimeSpan diff = scheduleCopyTarget.TargetDate.ToLocalTime().Date.Subtract(original.Start);
+
+                scheduleSlot.Start = original.Start.Add(diff).ToLocalTime();
+                scheduleSlot.End = original.End.Add(diff).ToLocalTime();
+
+                Result result = scheduleRepository.ScheduleMovie(scheduleCopyTarget.RoomIds.ElementAt(i), parser.ToScheduleSlot(scheduleSlot));
+                if (!result.Success)
+                {
+                    if (result.Exception == null)
+                    {
+                        Log.Warning("Couldn't copy schedule slot with id {0}!", scheduleSlot.Id);
+                    }
+                    else
+                    {
+                        Log.Error(result.Exception, "Exception thrown while trying to copy schedule slot with id {0}!", scheduleSlot.Id);
+                    }
+                }
+            }
+
+            return new Result();
         }
     }
 }

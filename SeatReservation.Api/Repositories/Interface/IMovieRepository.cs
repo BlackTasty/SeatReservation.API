@@ -11,6 +11,8 @@ namespace SeatReservation.Api.Repositories.Interface
     {
         ICollection<Movie> GetMovies(bool showArchived);
 
+        Movie GetMovieById(int movieId);
+
         ICollection<Movie> GetFeaturedMovies();
 
         ICollection<Movie> SearchMoviesByTitle(string title);
@@ -26,5 +28,17 @@ namespace SeatReservation.Api.Repositories.Interface
         Genre GetGenreById(int genreId);
 
         Movie GetById(int id);
+
+        int AddPerson(Person person);
+
+        ICollection<Person> GetPeople();
+
+        int AddStudio(Studio studio);
+
+        ICollection<Studio> GetStudios();
+
+        Person GetPersonById(int id);
+
+        Studio GetStudioById(int id);
     }
 }

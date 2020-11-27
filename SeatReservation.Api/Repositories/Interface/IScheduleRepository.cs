@@ -15,7 +15,7 @@ namespace SeatReservation.Api.Repositories.Interface
 
         Result RemoveSchedule(int scheduleId);
 
-        Result ScheduleMovie(int roomId, ScheduleSlot scheduleSlot);
+        Result ScheduleMovie(int roomId, ScheduleSlot scheduleSlot, bool saveChanges = true);
 
         Result RemoveScheduledMovie(int roomId, int scheduleSlotId);
 
@@ -24,6 +24,8 @@ namespace SeatReservation.Api.Repositories.Interface
         ScheduleSlot GetScheduleSlotById(int scheduleSlotId);
 
         int GenerateSchedule(bool writeToDatabase);
+
+        ICollection<DateTime> GetDatesWithMovies();
 
         Result AddReservationsToScheduleSlot(int scheduleSlotId, ICollection<Reservation> reservations);
     }

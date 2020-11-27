@@ -33,6 +33,12 @@ namespace SeatReservation.Api.DTO
 
         public bool IsFeatured { get; set; }
 
+        public ICollection<PersonDto> Directors { get; set; }
+
+        public ICollection<PersonDto> Actors { get; set; }
+
+        public ICollection<StudioDto> Studios { get; set; }
+
         //TODO: Add Rating?
     }
 }

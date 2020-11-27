@@ -34,7 +34,7 @@ namespace SeatReservation.Api.Repositories.Implementation
                 ICollection<Reservation> dbReservations = GetReservations().ToList();
                 foreach (Reservation reservation in reservations)
                 {
-                    if (dbReservations.Any(x => x.SeatId == reservation.SeatId))
+                    if (dbReservations.Any(x => x.ScheduleSlotId == reservation.ScheduleSlotId && x.SeatId == reservation.SeatId))
                     {
                         return new Result(false);
                     }

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace SeatReservation.Api.Services.Implementation
 {
@@ -27,7 +28,7 @@ namespace SeatReservation.Api.Services.Implementation
 
         public Result AddMovie(MovieDto movie)
         {
-            return movieRepository.AddMovie(parser.ToMovie(movie));
+            return movieRepository.AddMovie(parser.ToMovie(CheckPeopleAndStudios(movie)));
         }
 
         public Result ArchiveMovie(int movieId)
@@ -57,7 +58,7 @@ namespace SeatReservation.Api.Services.Implementation
 
         public Result UpdateMovie(MovieDto movie)
         {
-            return movieRepository.UpdateMovie(parser.ToMovie(movie));
+            return movieRepository.UpdateMovie(parser.ToMovie(CheckPeopleAndStudios(movie)));
         }
 
         public ICollection<GenreDto> GetGenres()
@@ -78,6 +79,101 @@ namespace SeatReservation.Api.Services.Implementation
                 movies.Add(parser.ToMovieDto(movie));
             }
             return movies;
+        }
+
+        public MovieDto GetMovieById(int movieId)
+        {
+            return parser.ToMovieDto(movieRepository.GetMovieById(movieId));
+        }
+
+        /*public Result AddPerson(PersonDto person)
+        {
+            return movieRepository.AddPerson(parser.ToPerson(person));
+        }
+
+        public Result AddStudio(StudioDto studio)
+        {
+            return movieRepository.AddStudio(parser.ToStudio(studio));
+        }*/
+
+        public ICollection<PersonDto> GetPeople()
+        {
+            List<PersonDto> peopleDto = new List<PersonDto>();
+            foreach (Person person in movieRepository.GetPeople())
+            {
+                peopleDto.Add(parser.ToPersonDto(person));
+            }
+
+            return peopleDto;
+        }
+
+        public ICollection<StudioDto> GetStudios()
+        {
+            List<StudioDto> studiosDto = new List<StudioDto>();
+            foreach (Studio studio in movieRepository.GetStudios())
+            {
+                studiosDto.Add(parser.ToStudioDto(studio));
+            }
+
+            return studiosDto;
+        }
+
+        private MovieDto CheckPeopleAndStudios(MovieDto movieDto)
+        {
+            foreach (StudioDto studio in movieDto.Studios.Where(x => x.Id == 0))
+            {
+                int id = movieRepository.AddStudio(parser.ToStudio(studio));
+
+                if (id > 0)
+                {
+                    studio.Id = id;
+                }
+                else
+                {
+                    Log.Warning("Unable to add studio!");
+                }
+            }
+
+            List<PersonDto> addedPeople = new List<PersonDto>();
+
+            foreach (PersonDto person in movieDto.Actors.Where(x => x.Id == 0))
+            {
+                int id = movieRepository.AddPerson(parser.ToPerson(person));
+
+                if (id > 0)
+                {
+                    person.Id = id;
+                    addedPeople.Add(person);
+                }
+                else
+                {
+                    Log.Warning("Unable to add actor!");
+                }
+            }
+
+            foreach (PersonDto person in movieDto.Directors.Where(x => x.Id == 0))
+            {
+                PersonDto existingPerson = addedPeople.FirstOrDefault(x => x.UniqueAddId == person.UniqueAddId);
+                if (existingPerson != null)
+                {
+                    person.Id = existingPerson.Id;
+                }
+                else
+                {
+                    int id = movieRepository.AddPerson(parser.ToPerson(person));
+
+                    if (id > 0)
+                    {
+                        person.Id = id;
+                    }
+                    else
+                    {
+                        Log.Warning("Unable to add director!");
+                    }
+                }
+            }
+
+            return movieDto;
         }
     }
 }

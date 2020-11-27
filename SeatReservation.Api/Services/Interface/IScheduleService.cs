@@ -22,5 +22,9 @@ namespace SeatReservation.Api.Services.Interface
         Result RemoveScheduledMovie(int roomId, int scheduleSlotId);
 
         int GenerateSchedule(bool writeToDatabase);
+
+        ICollection<DateTime> GetDatesWithMovies();
+
+        Result CopySchedule(ScheduleCopyTargetDto scheduleCopyTarget);
     }
 }

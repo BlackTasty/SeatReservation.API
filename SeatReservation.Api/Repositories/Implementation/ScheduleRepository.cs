@@ -177,7 +177,21 @@ namespace SeatReservation.Api.Repositories.Implementation
             }
         }
 
-        public Result ScheduleMovie(int roomId, ScheduleSlot scheduleSlot)
+        public ICollection<DateTime> GetDatesWithMovies()
+        {
+            List<DateTime> dates = new List<DateTime>();
+            foreach (ScheduleSlot scheduleSlot in databaseContext.ScheduleSlots)
+            {
+                if (!dates.Any(x => x.Date.Equals(scheduleSlot.Start.Date)))
+                {
+                    dates.Add(scheduleSlot.Start.Date);
+                }
+            }
+
+            return dates;
+        } 
+
+        public Result ScheduleMovie(int roomId, ScheduleSlot scheduleSlot, bool saveChanges = true)
         {
             try
             {
@@ -188,8 +202,17 @@ namespace SeatReservation.Api.Repositories.Implementation
                     return new Result(false);
                 }
 
+                var test = databaseContext.ScheduleSlots.FirstOrDefault(x => x.ScheduleId == room.ScheduleId && x.Start < scheduleSlot.End && scheduleSlot.Start < x.End);
                 // If scheduled slot overlaps with already scheduled movies return false
-                if (databaseContext.ScheduleSlots.Any(x => x.ScheduleId == room.ScheduleId && x.Start < scheduleSlot.End && scheduleSlot.Start < x.End))
+                if (databaseContext.ScheduleSlots.Any(x => x.ScheduleId == room.ScheduleId && x.Start < scheduleSlot.End && 
+                                                                           scheduleSlot.Start < x.End))
+                {
+                    return new Result(false);
+                }
+
+                Schedule schedule = GetScheduleById(room.ScheduleId);
+
+                if (schedule == null)
                 {
                     return new Result(false);
                 }
@@ -206,18 +229,14 @@ namespace SeatReservation.Api.Repositories.Implementation
                     }
                 } while (duplicateId);
                 scheduleSlot.Id = id;
-
-                Schedule schedule = GetScheduleById(room.ScheduleId);
-
-                if (schedule == null)
-                {
-                    return new Result(false);
-                }
                 schedule.MovieSchedule += string.IsNullOrWhiteSpace(schedule.MovieSchedule) ? id.ToString() : ";" + id;
 
                 databaseContext.Schedules.Update(schedule);
                 databaseContext.ScheduleSlots.Add(scheduleSlot);
-                databaseContext.SaveChanges();
+                if (saveChanges)
+                {
+                    databaseContext.SaveChanges();
+                }
                 return new Result();
             }
             catch (Exception ex)

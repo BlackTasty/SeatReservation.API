@@ -116,5 +116,36 @@ namespace SeatReservation.Api.Controllers
                 }
             }
         }
+
+        [HttpGet("getdateswithmovies")]
+        [ProducesResponseType(200)]
+        public IActionResult GetDatesWithMovies()
+        {
+            return Ok(scheduleService.GetDatesWithMovies());
+        }
+
+        [HttpPost("copyschedule")]
+        [ProducesResponseType(200)]
+        public IActionResult CopySchedule([FromBody]ScheduleCopyTargetDto scheduleCopyTarget)
+        {
+            Result result = scheduleService.CopySchedule(scheduleCopyTarget);
+            if (result.Success)
+            {
+                return Ok(result.Success);
+            }
+            else
+            {
+                if (result.Exception != null)
+                {
+                    Log.Error(result.Exception, "Error copying schedule!");
+                    return StatusCode(500);
+                }
+                else
+                {
+                    Log.Warning("Unable to copy schedule!");
+                    return Conflict();
+                }
+            }
+        }
     }
 }

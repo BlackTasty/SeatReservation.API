@@ -40,6 +40,12 @@ namespace SeatReservation.Api.Models
 
         public bool IsFeatured { get; set; }
 
+        public string Actors { get; set; }
+
+        public string Directors { get; set; }
+
+        public string Studios { get; set; }
+
         //TODO: Add Rating?
     }
 }

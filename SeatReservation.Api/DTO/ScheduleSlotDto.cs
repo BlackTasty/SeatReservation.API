@@ -20,5 +20,18 @@ namespace SeatReservation.Api.DTO
         public DateTime End { get; set; }
 
         public ICollection<ReservationDto> Reservations { get; set; }
+
+        public ScheduleSlotDto MakeCopy()
+        {
+            return new ScheduleSlotDto()
+            {
+                Id = Id,
+                MovieId = MovieId,
+                ScheduleId = ScheduleId,
+                Start = Start,
+                End = End,
+                Reservations = new List<ReservationDto>()
+            };
+        }
     }
 }

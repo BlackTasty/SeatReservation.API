@@ -42,5 +42,13 @@ namespace SeatReservation.Api.Util
         Reservation ToReservation(ReservationDto reservationDto);
 
         ReservationDto ToReservationDto(Reservation reservation);
+
+        PersonDto ToPersonDto(Person person);
+
+        Person ToPerson(PersonDto personDto);
+
+        StudioDto ToStudioDto(Studio studio);
+
+        Studio ToStudio(StudioDto studioDto);
     }
 }
