@@ -1,4 +1,5 @@
-﻿using SeatReservation.Api.Models;
+﻿using SeatReservation.Api.DTO;
+using SeatReservation.Api.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,13 +11,13 @@ namespace SeatReservation.Api.Repositories.Interface
     {
         User Authenticate(string username, string password);
 
-        bool Add(User user);
+        int Add(User user);
 
         bool Update(User user);
 
         bool Delete(int userId);
 
-        bool SetPermissions(UserPermission userPermission);
+        bool SetPermissions(UserPermissionDto userPermission);
 
         ICollection<Permission> GetPermissions(int userId);
 

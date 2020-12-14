@@ -1,4 +1,5 @@
 ﻿using SeatReservation.Api.Database;
+using SeatReservation.Api.DTO;
 using SeatReservation.Api.Models;
 using SeatReservation.Api.Repositories.Interface;
 using SeatReservation.Api.Util;
@@ -21,12 +22,18 @@ namespace SeatReservation.Api.Repositories.Implementation
             hasher = new PasswordHasher();
         }
 
-        public bool Add(User user)
+        public int Add(User user)
         {
             try
             {
                 Log.Information("Trying to add a new user (Username: " + user.Username + ").");
                 ICollection<User> users = Get();
+                if (users.Any(x => x.Username.ToLower() == user.Username.ToLower()))
+                {
+                    Log.Error("User with the username " + user.Username + " exists already!");
+                    return -2;
+                }
+
                 int id = users.Count + 1;
                 bool duplicateId = false;
                 do
@@ -44,12 +51,12 @@ namespace SeatReservation.Api.Repositories.Implementation
                 databaseContext.SaveChanges();
 
                 Log.Information("New user added successfully.");
-                return true;
+                return id;
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "Unexpected error occurred during user creation!");
-                return false;
+                return -1;
             }
         }
 
@@ -117,7 +124,7 @@ namespace SeatReservation.Api.Repositories.Implementation
             return permissions;
         }
 
-        public bool SetPermissions(UserPermission userPermission)
+        public bool SetPermissions(UserPermissionDto userPermission)
         {
             try
             {
@@ -132,7 +139,7 @@ namespace SeatReservation.Api.Repositories.Implementation
                 Log.Information("User found, updating permissions.");
                 string permissions = "";
 
-                foreach (Permission permission in userPermission.Permissions)
+                foreach (PermissionDto permission in userPermission.Permissions)
                 {
                     permissions += permissions == "" ? permission.Id.ToString() : ";" + permission.Id;
                 }

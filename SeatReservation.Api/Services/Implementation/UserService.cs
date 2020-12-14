@@ -21,7 +21,7 @@ namespace SeatReservation.Api.Services.Implementation
             this.mapper = mapper;
         }
 
-        public bool Add(UserDto user)
+        public int Add(UserDto user)
         {
             return userRepository.Add(ToUser(user));
         }
@@ -74,7 +74,7 @@ namespace SeatReservation.Api.Services.Implementation
 
         public bool SetPermissions(UserPermissionDto userPermission)
         {
-            return userRepository.SetPermissions(mapper.Map<UserPermission>(userPermission));
+            return userRepository.SetPermissions(userPermission);
         }
 
         public bool Update(UserDto user)
@@ -110,7 +110,7 @@ namespace SeatReservation.Api.Services.Implementation
                 Password = userDto.Password,
                 FirstName = userDto.FirstName,
                 LastName = userDto.LastName,
-                RegisterDate = userDto.RegisterDate,
+                RegisterDate = userDto.RegisterDate.ToLocalTime(),
                 Permissions = PermissionsListToString(userDto.Permissions)
             };
         }

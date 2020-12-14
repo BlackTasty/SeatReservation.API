@@ -10,7 +10,7 @@ namespace SeatReservation.Api.Services.Interface
     {
         UserDto Authenticate(string username, string password);
 
-        bool Add(UserDto user);
+        int Add(UserDto user);
 
         bool Update(UserDto user);
 
