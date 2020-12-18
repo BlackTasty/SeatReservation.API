@@ -175,5 +175,10 @@ namespace SeatReservation.Api.Services.Implementation
 
             return movieDto;
         }
+
+        public MovieDto GetMovieByScheduleSlotId(int scheduleSlotId)
+        {
+            return parser.ToMovieDto(movieRepository.GetMovieByScheduleSlotId(scheduleSlotId));
+        }
     }
 }

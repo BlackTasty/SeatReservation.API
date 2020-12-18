@@ -216,5 +216,13 @@ namespace SeatReservation.Api.Controllers
         {
             return Ok(movieService.GetStudios());
         }
+
+        [AllowAnonymous]
+        [HttpGet("getmoviebyscheduleslotid")]
+        [ProducesResponseType(200)]
+        public IActionResult GetMovieByScheduleSlotId(int id)
+        {
+            return Ok(movieService.GetMovieByScheduleSlotId(id));
+        }
     }
 }

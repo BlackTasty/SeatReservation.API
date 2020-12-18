@@ -433,7 +433,8 @@ namespace SeatReservation.Api.Util
                 SeatId = reservationDto.SeatId,
                 UserId = reservationDto.UserId,
                 Email = reservationDto.Email,
-                IsConfirmed = reservationDto.IsConfirmed
+                IsConfirmed = reservationDto.IsConfirmed,
+                ReservationNumber = reservationDto.ReservationNumber
             };
         }
 
@@ -456,7 +457,8 @@ namespace SeatReservation.Api.Util
                 SeatId = reservation.SeatId,
                 UserId = reservation.UserId,
                 Email = reservation.Email,
-                IsConfirmed = reservation.IsConfirmed
+                IsConfirmed = reservation.IsConfirmed,
+                ReservationNumber = reservation.ReservationNumber
             };
         }
 

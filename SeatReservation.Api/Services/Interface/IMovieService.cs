@@ -34,5 +34,7 @@ namespace SeatReservation.Api.Services.Interface
         //Result AddStudio(StudioDto studio);
 
         ICollection<StudioDto> GetStudios();
+
+        MovieDto GetMovieByScheduleSlotId(int scheduleSlotId);
     }
 }

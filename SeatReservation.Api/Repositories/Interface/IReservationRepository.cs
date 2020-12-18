@@ -18,5 +18,7 @@ namespace SeatReservation.Api.Repositories.Interface
         Result CancelReservation(Reservation reservation, int userId);
 
         ICollection<Reservation> GetReservationsForSchedule(int scheduleId);
+
+        ICollection<Reservation> GetReservationsForUserId(int userId, bool getReservationHistory);
     }
 }

@@ -34,9 +34,8 @@ namespace SeatReservation.Api.Services.Implementation
             {
                 return null;
             }
-
-            user.Password = null;
-            return ToUserDto(user);
+            
+            return ToUserDto(user, false);
         }
 
         public bool Delete(int userId)
@@ -49,7 +48,7 @@ namespace SeatReservation.Api.Services.Implementation
             List<UserDto> users = new List<UserDto>();
             foreach (User user in userRepository.Get())
             {
-                users.Add(ToUserDto(user));
+                users.Add(ToUserDto(user, false));
             }
 
             return users;
@@ -62,7 +61,7 @@ namespace SeatReservation.Api.Services.Implementation
 
         public UserDto GetById(int userId)
         {
-            UserDto user = ToUserDto(userRepository.GetById(userId));
+            UserDto user = ToUserDto(userRepository.GetById(userId), false);
             user.Permissions = GetPermissions(userId);
             return user;
         }
@@ -87,17 +86,22 @@ namespace SeatReservation.Api.Services.Implementation
             return mapper.Map<PermissionDto>(userRepository.GetPermissionById(id));
         }
 
-        private UserDto ToUserDto(User user)
+        private UserDto ToUserDto(User user, bool sendPassword)
         {
             return new UserDto()
             {
                 Id = user.Id,
                 Username = user.Username,
-                Password = user.Password,
+                Password = sendPassword ? user.Password : null,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 RegisterDate = user.RegisterDate,
-                Permissions = PermissionsStringToList(user.Permissions)
+                Permissions = PermissionsStringToList(user.Permissions),
+                Phone = user.Phone,
+                Address = user.Address,
+                PostalCode = user.PostalCode,
+                State = user.State,
+                Country = user.Country
             };
         }
 
@@ -111,7 +115,12 @@ namespace SeatReservation.Api.Services.Implementation
                 FirstName = userDto.FirstName,
                 LastName = userDto.LastName,
                 RegisterDate = userDto.RegisterDate.ToLocalTime(),
-                Permissions = PermissionsListToString(userDto.Permissions)
+                Permissions = PermissionsListToString(userDto.Permissions),
+                Phone = userDto.Phone,
+                Address = userDto.Address,
+                PostalCode = userDto.PostalCode,
+                State = userDto.State,
+                Country = userDto.Country
             };
         }
 

@@ -26,5 +26,7 @@ namespace SeatReservation.Api.DTO
         public string Email { get; set; }
 
         public bool IsConfirmed { get; set; }
+        
+        public string ReservationNumber { get; set; }
     }
 }

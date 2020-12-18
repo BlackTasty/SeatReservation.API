@@ -168,6 +168,12 @@ namespace SeatReservation.Api.Repositories.Implementation
                 dbUser.FirstName = user.FirstName;
                 dbUser.LastName = user.LastName;
                 dbUser.Username = user.Username;
+                dbUser.Address = user.Address;
+                dbUser.Country = user.Country;
+                dbUser.Phone = user.Phone;
+                dbUser.PostalCode = user.PostalCode;
+                dbUser.State = user.State;
+                dbUser.Email = user.Email;
                 if (!string.IsNullOrWhiteSpace(user.Password))
                 {
                     dbUser.Password = hasher.HashPassword(user.Username, user.Password);

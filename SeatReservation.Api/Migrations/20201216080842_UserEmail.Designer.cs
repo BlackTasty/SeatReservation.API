@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SeatReservation.Api.Database;
 
 namespace SeatReservation.Api.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20201216080842_UserEmail")]
+    partial class UserEmail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -140,9 +142,6 @@ namespace SeatReservation.Api.Migrations
                     b.Property<string>("Email");
 
                     b.Property<bool>("IsConfirmed");
-
-                    b.Property<string>("ReservationNumber")
-                        .IsRequired();
 
                     b.Property<int>("ReservationStatus");
 
@@ -318,7 +317,8 @@ namespace SeatReservation.Api.Migrations
 
                     b.Property<string>("Country");
 
-                    b.Property<string>("Email");
+                    b.Property<string>("Email")
+                        .IsRequired();
 
                     b.Property<string>("FirstName");
 

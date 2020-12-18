@@ -13,10 +13,12 @@ namespace SeatReservation.Api.Repositories.Implementation
     public class MovieRepository : IMovieRepository
     {
         private readonly DatabaseContext databaseContext;
+        private readonly IScheduleRepository scheduleRepository;
 
-        public MovieRepository(DatabaseContext databaseContext)
+        public MovieRepository(DatabaseContext databaseContext, IScheduleRepository scheduleRepository)
         {
             this.databaseContext = databaseContext;
+            this.scheduleRepository = scheduleRepository;
         }
 
         public Result AddMovie(Movie movie)
@@ -181,6 +183,12 @@ namespace SeatReservation.Api.Repositories.Implementation
         public Studio GetStudioById(int id)
         {
             return databaseContext.Studios.FirstOrDefault(x => x.Id == id);
+        }
+
+        public Movie GetMovieByScheduleSlotId(int scheduleSlotId)
+        {
+            ScheduleSlot scheduleSlot = scheduleRepository.GetScheduleSlotById(scheduleSlotId);
+            return scheduleSlot != null ? GetMovieById(scheduleSlot.MovieId) : null;
         }
     }
 }

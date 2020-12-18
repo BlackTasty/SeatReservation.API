@@ -40,5 +40,7 @@ namespace SeatReservation.Api.Repositories.Interface
         Person GetPersonById(int id);
 
         Studio GetStudioById(int id);
+
+        Movie GetMovieByScheduleSlotId(int scheduleSlotId);
     }
 }

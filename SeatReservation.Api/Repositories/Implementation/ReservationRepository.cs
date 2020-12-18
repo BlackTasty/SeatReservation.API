@@ -103,5 +103,20 @@ namespace SeatReservation.Api.Repositories.Implementation
         {
             return databaseContext.Reservations.Where(x => x.ScheduleSlotId == scheduleId).ToList();
         }
+
+        public ICollection<Reservation> GetReservationsForUserId(int userId, bool getReservationHistory)
+        {
+            List<Reservation> reservationHistory = new List<Reservation>();
+            DateTime now = DateTime.Now;
+            foreach (Reservation reservation in databaseContext.Reservations.Where(x => x.UserId == userId).ToList())
+            {
+                ScheduleSlot slot = scheduleRepository.GetScheduleSlotById(reservation.ScheduleSlotId);
+                if (slot.Start < now && getReservationHistory || slot.Start >= now && !getReservationHistory)
+                {
+                    reservationHistory.Add(reservation);
+                }
+            }
+            return reservationHistory;
+        }
     }
 }

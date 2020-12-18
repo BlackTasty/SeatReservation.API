@@ -182,7 +182,7 @@ namespace SeatReservation.Api.Repositories.Implementation
             List<DateTime> dates = new List<DateTime>();
             foreach (ScheduleSlot scheduleSlot in databaseContext.ScheduleSlots)
             {
-                if (!dates.Any(x => x.Date.Equals(scheduleSlot.Start.Date)))
+                if (scheduleSlot.Start >= DateTime.Now && !dates.Any(x => x.Date.Equals(scheduleSlot.Start.Date)))
                 {
                     dates.Add(scheduleSlot.Start.Date);
                 }

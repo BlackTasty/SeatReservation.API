@@ -30,5 +30,8 @@ namespace SeatReservation.Api.Models
         /// Currently unused
         /// </summary>
         public bool IsConfirmed { get; set; }
+
+        [Required]
+        public string ReservationNumber { get; set; }
     }
 }

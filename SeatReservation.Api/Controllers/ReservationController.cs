@@ -51,5 +51,19 @@ namespace SeatReservation.Api.Controllers
         {
             return Ok(reservationService.CancelReservation(reservation, user));
         }
+        
+        [HttpGet("getreservationsforuserid")]
+        [ProducesResponseType(200)]
+        public IActionResult GetReservationsForUserId(int id, bool getReservationHistory)
+        {
+            return Ok(reservationService.GetReservationsForUserId(id, getReservationHistory));
+        }
+
+        [HttpPost("getreservationdata")]
+        [ProducesResponseType(200)]
+        public IActionResult GetReservationData([FromBody]ICollection<ReservationDto> reservations)
+        {
+            return Ok(reservationService.GetReservationData(reservations));
+        }
     }
 }
