@@ -11,7 +11,7 @@ namespace SeatReservation.Api.DTO
 
         public string Name { get; set; }
 
-        public string SeatImage { get; set; }
+        public MediaFileDto SeatImage { get; set; }
 
         public int SeatCount { get; set; }
 

@@ -15,7 +15,7 @@ namespace SeatReservation.Api.Services.Interface
 
         RoomDto GetRoomById(int id);
 
-        Result AddRoom(RoomDto room);
+        Result AddRoom(RoomCreationDto room);
 
         Result UpdateRoom(RoomDto room);
 

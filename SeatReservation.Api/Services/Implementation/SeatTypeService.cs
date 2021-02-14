@@ -15,21 +15,30 @@ namespace SeatReservation.Api.Services.Implementation
     {
         private readonly ISeatTypeRepository seatTypeRepository;
         private readonly IMapper mapper;
+        private readonly IParser parser;
 
-        public SeatTypeService(ISeatTypeRepository seatTypeRepository, IMapper mapper)
+        public SeatTypeService(ISeatTypeRepository seatTypeRepository, IMapper mapper, IParser parser)
         {
             this.seatTypeRepository = seatTypeRepository;
             this.mapper = mapper;
+            this.parser = parser;
         }
 
         public Result AddSeatType(SeatTypeDto seatTypeDto)
         {
-            return seatTypeRepository.AddSeatType(mapper.Map<SeatType>(seatTypeDto));
+            return seatTypeRepository.AddSeatType(parser.ToSeatType(seatTypeDto));
         }
 
         public ICollection<SeatTypeDto> GetSeatTypes()
         {
-            return mapper.Map<ICollection<SeatTypeDto>>(seatTypeRepository.GetSeatTypes());
+            List<SeatTypeDto> seatTypes = new List<SeatTypeDto>();
+
+            foreach (SeatType seatType in seatTypeRepository.GetSeatTypes())
+            {
+                seatTypes.Add(parser.ToSeatTypeDto(seatType));
+            }
+
+            return seatTypes;
         }
 
         public Result RemoveSeatType(int seatTypeId)
@@ -39,7 +48,7 @@ namespace SeatReservation.Api.Services.Implementation
 
         public Result UpdateSeatType(SeatTypeDto seatTypeDto)
         {
-            return seatTypeRepository.UpdateSeatType(mapper.Map<SeatType>(seatTypeDto));
+            return seatTypeRepository.UpdateSeatType(parser.ToSeatType(seatTypeDto));
         }
     }
 }

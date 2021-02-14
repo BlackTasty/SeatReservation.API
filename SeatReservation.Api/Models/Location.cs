@@ -31,6 +31,8 @@ namespace SeatReservation.Api.Models
 
         public string Logo { get; set; }
 
+        public int LogoImageId { get; set; }
+
         [Required]
         public bool IsShutdown { get; set; }
     }

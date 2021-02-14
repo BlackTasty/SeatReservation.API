@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
 using SeatReservation.Api.DTO;
 using SeatReservation.Api.Models;
 using SeatReservation.Api.Repositories.Interface;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Pipelines;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,18 +20,22 @@ namespace SeatReservation.Api.Util
         private readonly ISeatTypeRepository seatTypeRepository;
         private readonly IReservationRepository reservationRepository;
         private readonly ILocationRepository locationRepository;
+        private readonly IFileRepository fileRepository;
         private readonly IMapper mapper;
+        private readonly IHostingEnvironment host;
 
-        public Parser(IScheduleRepository scheduleRepository, IRoomRepository roomRepository, IMovieRepository movieRepository,
-            ISeatTypeRepository seatTypeRepository, IReservationRepository reservationRepository, ILocationRepository locationRepository, 
+        public Parser(IHostingEnvironment host, IScheduleRepository scheduleRepository, IRoomRepository roomRepository, IMovieRepository movieRepository,
+            ISeatTypeRepository seatTypeRepository, IReservationRepository reservationRepository, ILocationRepository locationRepository, IFileRepository fileRepository,
             IMapper mapper)
         {
+            this.host = host;
             this.scheduleRepository = scheduleRepository;
             this.roomRepository = roomRepository;
             this.movieRepository = movieRepository;
             this.seatTypeRepository = seatTypeRepository;
             this.reservationRepository = reservationRepository;
             this.locationRepository = locationRepository;
+            this.fileRepository = fileRepository;
             this.mapper = mapper;
 
         }
@@ -138,10 +144,14 @@ namespace SeatReservation.Api.Util
             {
                 Id = movie.Id,
                 Title = movie.Title,
-                Banner = movie.Banner,
-                Poster = movie.Poster,
-                Logo = movie.Logo,
-                Trailer = movie.Trailer,
+                BannerId = movie.BannerImageId,
+                Banner = movie.BannerImageId > 0 ? ToMediaFileDto(fileRepository.GetById(movie.BannerImageId))?.FilePath : movie.Banner,
+                PosterId = movie.PosterImageId,
+                Poster = movie.PosterImageId > 0 ? ToMediaFileDto(fileRepository.GetById(movie.PosterImageId))?.FilePath : movie.Poster,
+                LogoId = movie.LogoImageId,
+                Logo = movie.LogoImageId > 0 ? ToMediaFileDto(fileRepository.GetById(movie.LogoImageId))?.FilePath : movie.Logo,
+                TrailerId = movie.TrailerVideoId,
+                Trailer = movie.TrailerVideoId > 0 ? ToMediaFileDto(fileRepository.GetById(movie.TrailerVideoId))?.FilePath : movie.Trailer,
                 Description = movie.Description,
                 MovieLength = movie.MovieLength,
                 ReleaseDate = movie.ReleaseDate,
@@ -160,10 +170,14 @@ namespace SeatReservation.Api.Util
             {
                 Id = movieDto.Id,
                 Title = movieDto.Title,
+                BannerImageId = movieDto.BannerId,
                 Banner = movieDto.Banner,
-                Poster = movieDto.Poster,
-                Logo = movieDto.Logo,
-                Trailer = movieDto.Trailer,
+                PosterImageId = movieDto.PosterId,
+                Poster = movieDto.Banner,
+                LogoImageId = movieDto.LogoId,
+                Logo = movieDto.Banner,
+                TrailerVideoId = movieDto.TrailerId,
+                Trailer = movieDto.Banner,
                 Description = movieDto.Description,
                 MovieLength = movieDto.MovieLength,
                 ReleaseDate = movieDto.ReleaseDate.ToLocalTime(),
@@ -188,9 +202,29 @@ namespace SeatReservation.Api.Util
                 ZipCode = location.ZipCode,
                 Country = location.Country,
                 State = location.State,
-                Logo = location.Logo,
+                Logo = location.LogoImageId > 0 ? ToMediaFileDto(fileRepository.GetById(location.LogoImageId)) : new MediaFileDto()
+                {
+                    FilePath = location.Logo,
+                    Id = 0,
+                    DataType = FileDataType.Url
+                },
                 IsShutdown = location.IsShutdown,
                 Rooms = assignedRooms
+            };
+        }
+
+        public Location ToLocation(LocationDto locationDto)
+        {
+            return new Location()
+            {
+                Id = locationDto.Id,
+                Name = locationDto.Name,
+                Address = locationDto.Address,
+                ZipCode = locationDto.ZipCode,
+                Country = locationDto.Country,
+                State = locationDto.State,
+                LogoImageId = locationDto.Logo.Id,
+                IsShutdown = locationDto.IsShutdown
             };
         }
 
@@ -215,21 +249,6 @@ namespace SeatReservation.Api.Util
             }
 
             return assignedRooms.OrderBy(x => x.Name).ToList();
-        }
-
-        public Location ToLocation(LocationDto locationDto)
-        {
-            return new Location()
-            {
-                Id = locationDto.Id,
-                Name = locationDto.Name,
-                Address = locationDto.Address,
-                ZipCode = locationDto.ZipCode,
-                Country = locationDto.Country,
-                State = locationDto.State,
-                Logo = locationDto.Logo,
-                IsShutdown = locationDto.IsShutdown
-            };
         }
 
         private List<GenreDto> GenresStringToList(string genresString)
@@ -317,6 +336,79 @@ namespace SeatReservation.Api.Util
             return studiosString;
         }
 
+        public MediaFileDto ToMediaFileDto(MediaFile mediaFile)
+        {
+            if (mediaFile == null)
+            {
+                return null;
+            }
+
+            return new MediaFileDto()
+            {
+                Id = mediaFile.Id,
+                DataType = mediaFile.DataType,
+                FilePath = ParseMediaFilePath(mediaFile)
+            };
+        }
+
+        private string ParseMediaFilePath(MediaFile mediaFile)
+        {
+            switch (mediaFile.DataType)
+            {
+                case FileDataType.File:
+                    return Path.Combine(host.WebRootPath, "uploads", mediaFile.FileType == MediaFileType.Image ? "image" : "video", mediaFile.FileName);
+                case FileDataType.YouTube:
+                case FileDataType.Url:
+                    return mediaFile.FileName;
+            }
+
+            return mediaFile.FileName;
+        }
+
+        public MediaFile ToMediaFile(MediaFileDto mediaFileDto)
+        {
+            if (mediaFileDto == null)
+            {
+                return null;
+            }
+
+            return new MediaFile()
+            {
+                Id = mediaFileDto.Id,
+                DataType = mediaFileDto.DataType,
+                //FilePath = mediaFileDto.DataType == FileDataType.File ? 
+            };
+        }
+
+        public SeatTypeDto ToSeatTypeDto(SeatType seatType)
+        {
+            return new SeatTypeDto()
+            {
+                Id = seatType.Id,
+                BasePrice = seatType.BasePrice,
+                Name = seatType.Name,
+                SeatCount = seatType.SeatCount,
+                SeatImage = seatType.SeatImageId > 0 ? ToMediaFileDto(fileRepository.GetById(seatType.SeatImageId)) : new MediaFileDto()
+                {
+                    FilePath = seatType.SeatImage,
+                    Id = 0,
+                    DataType = FileDataType.Url
+                }
+            };
+        }
+
+        public SeatType ToSeatType(SeatTypeDto seatTypeDto)
+        {
+            return new SeatType()
+            {
+                Id = seatTypeDto.Id,
+                BasePrice = seatTypeDto.BasePrice,
+                Name = seatTypeDto.Name,
+                SeatCount = seatTypeDto.SeatCount,
+                SeatImageId = seatTypeDto.SeatImage.Id
+            };
+        }
+
         #region List parser
         #region MovieSchedule
         private string MovieScheduleToString(ICollection<ScheduleSlotDto> scheduleSlots)
@@ -362,7 +454,7 @@ namespace SeatReservation.Api.Util
                 {
                     continue;
                 }
-                seatPosition.SeatType = mapper.Map<SeatTypeDto>(seatTypeRepository.GetSeatTypeById(seatPosition.SeatTypeId));
+                seatPosition.SeatType = ToSeatTypeDto(seatTypeRepository.GetSeatTypeById(seatPosition.SeatTypeId));
                 seatPositions.Add(seatPosition);
             }
 

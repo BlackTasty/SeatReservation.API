@@ -16,14 +16,22 @@ namespace SeatReservation.Api.Models
         [Required]
         public string Banner { get; set; }
 
+        public int BannerImageId { get; set; }
+
         [Required]
         public string Poster { get; set; }
+
+        public int PosterImageId { get; set; }
 
         [Required]
         public string Logo { get; set; }
 
+        public int LogoImageId { get; set; }
+
         [Required]
         public string Trailer { get; set; }
+
+        public int TrailerVideoId { get; set; }
 
         [Required]
         public string Description { get; set; }

@@ -23,7 +23,7 @@ namespace SeatReservation.Api.DTO
         // Bundesland
         public string State { get; set; }
 
-        public string Logo { get; set; }
+        public MediaFileDto Logo { get; set; }
 
         public bool IsShutdown { get; set; }
 

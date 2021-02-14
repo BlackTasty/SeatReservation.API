@@ -16,22 +16,32 @@ namespace SeatReservation.Api.Services.Implementation
         private readonly IRoomRepository roomRepository;
         private readonly IScheduleRepository scheduleRepository;
         private readonly ISeatTypeRepository seatTypeRepository;
+        private readonly ILocationRepository locationRepository;
         private readonly IMapper mapper;
         private readonly IParser parser;
 
         public RoomService(IRoomRepository roomRepository, IScheduleRepository scheduleRepository, ISeatTypeRepository seatTypeRepository, 
-            IMapper mapper, IParser parser)
+            ILocationRepository locationRepository, IMapper mapper, IParser parser)
         {
             this.roomRepository = roomRepository;
             this.scheduleRepository = scheduleRepository;
             this.seatTypeRepository = seatTypeRepository;
+            this.locationRepository = locationRepository;
             this.mapper = mapper;
             this.parser = parser;
         }
 
-        public Result AddRoom(RoomDto room)
+        public Result AddRoom(RoomCreationDto roomCreation)
         {
-            return roomRepository.AddRoom(parser.ToRoom(room), parser.ToRoomPlan(room.RoomPlan, true), mapper.Map<ICollection<SeatPosition>>(room.RoomPlan.Seats));
+            Result result = roomRepository.AddRoom(parser.ToRoom(roomCreation.Room), parser.ToRoomPlan(roomCreation.Room.RoomPlan, true),
+                        mapper.Map<ICollection<SeatPosition>>(roomCreation.Room.RoomPlan.Seats));
+            if (result.Id > 0)
+            {
+                RoomAssignment roomAssignment = locationRepository.GetRoomAssignmentForLocation(roomCreation.LocationId);
+                roomAssignment.RoomIds += !string.IsNullOrWhiteSpace(roomAssignment.RoomIds) ? ";" + result.Id : result.Id.ToString();
+                locationRepository.UpdateRoomAssignment(roomAssignment);
+            }
+            return result;
         }
 
         public RoomDto GetRoomByName(string name)

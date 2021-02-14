@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SeatReservation.Api.Database;
 
 namespace SeatReservation.Api.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20210116043534_SeatsDisable")]
+    partial class SeatsDisable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,8 +47,6 @@ namespace SeatReservation.Api.Migrations
 
                     b.Property<string>("Logo");
 
-                    b.Property<int>("LogoImageId");
-
                     b.Property<string>("Name")
                         .IsRequired();
 
@@ -60,24 +60,6 @@ namespace SeatReservation.Api.Migrations
                     b.ToTable("locations");
                 });
 
-            modelBuilder.Entity("SeatReservation.Api.Models.MediaFile", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("DataType");
-
-                    b.Property<int>("FileCategory");
-
-                    b.Property<string>("FileName");
-
-                    b.Property<int>("FileType");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Files");
-                });
-
             modelBuilder.Entity("SeatReservation.Api.Models.Movie", b =>
                 {
                     b.Property<int>("Id")
@@ -87,8 +69,6 @@ namespace SeatReservation.Api.Migrations
 
                     b.Property<string>("Banner")
                         .IsRequired();
-
-                    b.Property<int>("BannerImageId");
 
                     b.Property<string>("Description")
                         .IsRequired();
@@ -104,14 +84,10 @@ namespace SeatReservation.Api.Migrations
                     b.Property<string>("Logo")
                         .IsRequired();
 
-                    b.Property<int>("LogoImageId");
-
                     b.Property<int>("MovieLength");
 
                     b.Property<string>("Poster")
                         .IsRequired();
-
-                    b.Property<int>("PosterImageId");
 
                     b.Property<DateTime>("ReleaseDate");
 
@@ -122,8 +98,6 @@ namespace SeatReservation.Api.Migrations
 
                     b.Property<string>("Trailer")
                         .IsRequired();
-
-                    b.Property<int>("TrailerVideoId");
 
                     b.HasKey("Id");
 
@@ -322,8 +296,6 @@ namespace SeatReservation.Api.Migrations
 
                     b.Property<string>("SeatImage");
 
-                    b.Property<int>("SeatImageId");
-
                     b.HasKey("Id");
 
                     b.ToTable("seat_types");
@@ -347,8 +319,6 @@ namespace SeatReservation.Api.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Address");
-
-                    b.Property<int>("AvatarImageId");
 
                     b.Property<string>("Country");
 

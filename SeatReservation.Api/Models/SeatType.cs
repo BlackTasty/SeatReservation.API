@@ -15,6 +15,8 @@ namespace SeatReservation.Api.Models
 
         public string SeatImage { get; set; }
 
+        public int SeatImageId { get; set; }
+
         [Required]
         public int SeatCount { get; set; } = 1;
 

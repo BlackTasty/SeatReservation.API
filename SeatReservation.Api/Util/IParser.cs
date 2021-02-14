@@ -50,5 +50,13 @@ namespace SeatReservation.Api.Util
         StudioDto ToStudioDto(Studio studio);
 
         Studio ToStudio(StudioDto studioDto);
+
+        MediaFileDto ToMediaFileDto(MediaFile mediaFile);
+
+        MediaFile ToMediaFile(MediaFileDto mediaFileDto);
+
+        SeatTypeDto ToSeatTypeDto(SeatType seatType);
+
+        SeatType ToSeatType(SeatTypeDto seatTypeDto);
     }
 }

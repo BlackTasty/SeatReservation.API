@@ -8,6 +8,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -49,6 +50,7 @@ namespace SeatReservation.Api
             services.AddScoped<ISeatTypeRepository, SeatTypeRepository>();
             services.AddScoped<IReservationRepository, ReservationRepository>();
             services.AddScoped<ILocationRepository, LocationRepository>();
+            services.AddScoped<IFileRepository, FileRepository>();
             #endregion
             #region Services
             services.AddScoped<IMovieService, MovieService>();
@@ -58,6 +60,7 @@ namespace SeatReservation.Api
             services.AddScoped<ISeatTypeService, SeatTypeService>();
             services.AddScoped<IReservationService, ReservationService>();
             services.AddScoped<ILocationService, LocationService>();
+            services.AddScoped<IFileService, FileService>();
             #endregion
             #region Parser
             services.AddScoped<IParser, Parser>();
@@ -82,10 +85,22 @@ namespace SeatReservation.Api
 
             services.AddAutoMapper();
             // Add if required
-            services.AddCors();
+            services.AddCors(options => options.AddPolicy("AllowAll", builder =>
+            {
+                builder.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+            }));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            });
+
+            services.Configure<FormOptions>(o =>
+            {
+                o.ValueLengthLimit = int.MaxValue;
+                o.MultipartBodyLengthLimit = int.MaxValue;
+                o.MemoryBufferThreshold = int.MaxValue;
             });
 
             #region Authentication
@@ -100,6 +115,10 @@ namespace SeatReservation.Api
             if (string.IsNullOrWhiteSpace(env.WebRootPath))
             {
                 env.WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                if (!Directory.Exists(env.WebRootPath))
+                {
+                    Directory.CreateDirectory(env.WebRootPath);
+                }
             }
 
             // Add if required
@@ -108,6 +127,7 @@ namespace SeatReservation.Api
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials());
+            app.UseStaticFiles();
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
@@ -153,6 +173,7 @@ namespace SeatReservation.Api
             var locationConfiguration = Configuration.GetSection("Location").Get<LocationConfiguration>();
             var roomAssignmentConfiguration = Configuration.GetSection("RoomAssignment").Get<RoomAssignmentConfiguration>();
             var roomTechnologyConfiguration = Configuration.GetSection("RoomTechnology").Get<RoomTechnologyConfiguration>();
+            var fileConfiguration = Configuration.GetSection("File").Get<FileConfiguration>();
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetRequiredService<DatabaseContext>();
@@ -164,6 +185,7 @@ namespace SeatReservation.Api
                 SeatTypeSeed.Seed(context, seatTypeConfiguration.SeatTypes);
                 LocationSeed.Seed(context, locationConfiguration.Locations);
                 RoomTechnologySeed.Seed(context, roomTechnologyConfiguration.RoomTechnologies);
+                FileSeed.Seed(context, fileConfiguration);
             }
         }
     }

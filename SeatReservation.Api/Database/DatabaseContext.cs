@@ -42,7 +42,9 @@ namespace SeatReservation.Api.Database
 
         public DbSet<Person> People { get; set; }
 
-        public DbSet<Studio> Studios{ get; set; }
+        public DbSet<Studio> Studios { get; set; }
+
+        public DbSet<MediaFile> Files { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

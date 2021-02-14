@@ -37,5 +37,7 @@ namespace SeatReservation.Api.Models
 
         [Required]
         public string Permissions { get; set; }
+
+        public int AvatarImageId { get; set; }
     }
 }

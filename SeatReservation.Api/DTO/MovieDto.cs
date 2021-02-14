@@ -13,11 +13,19 @@ namespace SeatReservation.Api.DTO
 
         public string Banner { get; set; }
 
+        public int BannerId { get; set; }
+
         public string Poster { get; set; }
+
+        public int PosterId { get; set; }
 
         public string Logo { get; set; }
 
+        public int LogoId { get; set; }
+
         public string Trailer { get; set; }
+
+        public int TrailerId { get; set; }
 
         public string Description { get; set; }
 

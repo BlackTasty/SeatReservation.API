@@ -66,7 +66,7 @@ namespace SeatReservation.Api.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(409)]
         [ProducesResponseType(500)]
-        public IActionResult AddRoom([FromBody]RoomDto room)
+        public IActionResult AddRoom([FromBody]RoomCreationDto room)
         {
             Result result = roomService.AddRoom(room);
             if (result.Success)
